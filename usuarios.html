@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Usuários de Teste com VUE JS</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+    <style>
+        body {
+            min-height: 100vh;
+        }
+        .card {
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body class="bg-warning">
+
+    <div id="usuarios" class="container py-4">
+        <h1 class="text-center text-dark">Usuários de Teste via REST</h1>
+        <p class="text-center text-muted">
+            Dados fornecidos gratuitamente por <a href="https://jsonplaceholder.typicode.com/" target="_blank">JSONPlaceholder</a>
+        </p>
+
+        <div class="row mt-4">
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4" v-for="(user, index) in users" :key="index">
+                <div class="card h-100">
+                    <img :src="getAvatarUrl(user)" class="card-img-top" :alt="'Avatar de ' + user.name">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">{{ user.name }}</h5>
+                        <p class="card-text text-muted mt-auto">{{ user.email }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div v-if="users.length === 0" class="text-center">
+            <p>Carregando usuários...</p>
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const app = new Vue({
+            el: '#usuarios',
+            
+            data: {
+                users: []
+            },
+
+            methods: {
+                loadUsers() {
+                    const url = 'https://jsonplaceholder.typicode.com/users';
+                    
+                    fetch(url)
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Erro na requisição da rede');
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            this.users = data;
+                        })
+                        .catch(error => {
+                            console.error('Erro ao carregar os usuários:', error);
+                            alert('Não foi possível carregar os dados dos usuários.');
+                        });
+                },
+                getAvatarUrl(user) {
+                    const initials = user.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+                    return `https://placehold.co/200x200/007bff/FFF?text=${initials}`;
+                }
+            },
+
+            mounted() {
+                this.loadUsers();
+            }
+        });
+    </script>
+
+</body>
+</html>

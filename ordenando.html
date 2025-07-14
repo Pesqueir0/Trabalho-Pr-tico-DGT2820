@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ordenando Valores</title>
+    <script src="ordenando.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .container {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        h1 {
+            color: #333;
+        }
+        .controls, .actions {
+            margin-bottom: 1rem;
+        }
+        input, select, button {
+            padding: 0.5rem;
+            margin: 0.25rem;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            font-size: 1rem;
+        }
+        button {
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #valores {
+            list-style-type: none;
+            padding: 0;
+            margin-top: 1rem;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        #valores li {
+            background-color: #e9ecef;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Ordenando Valores</h1>
+
+        <div class="controls">
+            <input type="number" id="valor" placeholder="Digite um número">
+            <button onclick="add()">Adicionar</button>
+        </div>
+
+        <div class="actions">
+            <select id="algoritmo">
+                <option value="bubble">Bubble Sort</option>
+                <option value="selection">Selection Sort</option>
+                <option value="quick">Quick Sort</option>
+            </select>
+            <button onclick="ordenar()">Ordenar</button>
+            <button onclick="misturar()">Misturar</button>
+        </div>
+
+        <ul id="valores"></ul>
+    </div>
+
+    <script>
+        function add() {
+            const inputValor = document.getElementById('valor');
+            const listaValores = document.getElementById('valores');
+
+            if (inputValor.value === '') {
+                alert('Por favor, digite um número.');
+                return;
+            }
+
+            const node = document.createElement('li');
+            const textNode = document.createTextNode(inputValor.value);
+            node.appendChild(textNode);
+
+            listaValores.appendChild(node);
+
+            inputValor.value = '';
+            inputValor.focus();
+        }
+
+        function getValoresFromUI() {
+            const listaValores = document.getElementById('valores');
+            const vetor = [];
+            for (let item of listaValores.children) {
+                vetor.push(eval(item.innerHTML));
+            }
+            return vetor;
+        }
+
+        function updateValoresInUI(vetor) {
+            const listaValores = document.getElementById('valores');
+            const novoHtml = vetor
+                .map(valor => `<li>${valor}</li>`)
+                .reduce((acc, item) => acc + item, '');
+            listaValores.innerHTML = novoHtml;
+        }
+
+        function ordenar() {
+            const seletorAlgoritmo = document.getElementById('algoritmo');
+            const vetor = getValoresFromUI();
+            
+            if (vetor.length === 0) {
+                alert('Adicione valores à lista antes de ordenar.');
+                return;
+            }
+
+            switch (seletorAlgoritmo.value) {
+                case 'bubble':
+                    bubble_sort(vetor);
+                    break;
+                case 'selection':
+                    selection_sort(vetor);
+                    break;
+                case 'quick':
+                    quick_sort(vetor);
+                    break;
+            }
+
+            updateValoresInUI(vetor);
+        }
+
+        function misturar() {
+            const vetor = getValoresFromUI();
+
+            if (vetor.length === 0) {
+                alert('Adicione valores à lista antes de misturar.');
+                return;
+            }
+            
+            shuffle(vetor, vetor.length);
+
+            updateValoresInUI(vetor);
+        }
+    </script>
+
+</body>
+</html>
